@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+        <title>博客网</title>
+
+
+
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="icon" href="/static/images/ico/tfff.ico">
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+
+</head>
+<body>
+<div class="jumbotron">
+    <div class="container">
+  <h1>sex</h1>
+  <p>欢迎您，{{ request.user.username }}</p>
+         <p><a class="btn btn-primary btn-lg" href="{% url 'index' %}" role="button">返回首页</a>
+            <span class="pull-right">上次登录时间:{{ request.user.last_login|date:'Y-m-d H:i:s' }}</span>
+         </p>
+    </div>
+    </div>
+<div class="container-fluid">
+    <div class="row">
+                    <div class="col-md-3">
+
+                {% for cate in cate_list %}
+                        {{ cate.title }}
+                {% endfor %}
+
+                    <div class="panel panel-danger">
+                      <div class="panel-heading">文章分类</div>
+                      <div class="panel-body">
+                        {% for cate, count in cate_list %}
+                                <p><a href="/{{ username }}/category/{{ cate }}">{{ cate.title }}({{ count }})</a></p>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+
+                     <div class="panel panel-success">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">标签分类</h3>
+                          </div>
+                          <div class="panel-body">
+
+                              {% for tag, count in tag_list %}
+                                    <p><a href="/{{ username }}/tag/{{ tag }}">{{ tag }}({{ count }})</a></p>
+                              {% endfor %}
+
+
+                          </div>
+                         </div>
+
+                    <div class="panel panel-footer">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">日期归档</h3>
+                          </div>
+                          <div class="panel-body">
+
+                              {% for date in date_list %}
+                                    <p><a href="/{{ username }}/time/{{ date.0 }}">{{ date.0 }}({{ date.1 }})</a></p>
+                              {% endfor %}
+
+
+                          </div>
+                     </div>
+
+            </div>
+
+
+        <div class="col-md-9">
+
+                            {% for article in article_list %}
+                 <div class="article_item clearfix">
+                      <h5><a href="/{{ username }}/articles/{{ article.pk }}">{{ article.title }}</a></h5>
+                      <div>
+
+                          <span class="small desc ">
+                              {{ article.desc }}
+                          </span>
+
+                      </div>
+                      <div class="info small pull-right">
+                            发布于 <span>{{ article.create_time|date:'Y-m-d H:i' }}</span>&nbsp;&nbsp;
+                           <span class="glyphicon glyphicon-comment"></span><a href="">评论({{ article.comment_count }})</a>&nbsp;&nbsp;
+                           <span class="glyphicon glyphicon-thumbs-up"></span><a href="">点赞({{ article.up_count }})</a>
+                      </div>
+                 </div>
+                    <hr>
+                {% endfor %}
+
+
+
+
+
+
+        <div class="col-lg-offset-2">
+
+                <div class="article_info">
+        <h4 class="text-center">{{ article_obj.title }}</h4>
+        <div class="content">
+            {{ article_obj.content|safe }}
+        </div>
+        <div class="clearfix">
+            <div id="div_digg">
+            <div class="diggit action">
+                <span class="diggnum" id="digg_count">{{ article_obj.up_count }}</span>
+            </div>
+            <div class="buryit action">
+                <span class="burynum" id="bury_count">{{ article_obj.down_count }}</span>
+            </div>
+            <div class="clear"></div>
+            <div class="diggword" id="digg_tips"></div>
+        </div>
+        </div>
+
+
+        <div class="comment">
+            <p>评论列表</p>
+            <ul class="comment_list list-group">
+                {% for comment in comment_list %}
+                <li class="list-group-item">
+                   <div>
+                       <a href="">#{{ forloop.counter }}楼</a>&nbsp;&nbsp;
+                       <span class="small">{{ comment.create_time|date:"Y-m-d H:i" }}</span>&nbsp;&nbsp;
+                       <a href="">{{ comment.user.username }}</a>
+                       <a href="javascript:void(0)" class="pull-right reply_btn" username="{{ comment.user.username }}" comment_id="{{ comment.pk }}"><span>回复</span></a>
+
+                   </div>
+                    {% if comment.parent_comment_id %}
+                    <div class="parent_comment_info well">
+                         <p>
+                             {{ comment.parent_comment.user }}: {{ comment.parent_comment.content }}
+                         </p>
+                    </div>
+                    {% endif %}
+                   <div>
+                       <p>{{ comment.content }}</p>
+                   </div>
+                </li>
+                {% endfor %}
+
+            </ul>
+            <p>发表评论</p>
+            <p>昵称：<input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50" value="{{ request.user.username }}"></p>
+            <div>
+                <textarea name="" id="comment_content" cols="60" rows="10"></textarea>
+            </div>
+            <input type="button" value="submit" class="btn btn-default comment_btn">
+        </div>
+
+
+
+        {% csrf_token %}
+      </div>
+        <script>
+            // 点赞
+            $(".action").click(function () {
+
+                if ("{{ request.user.username }}") {
+
+                    // 赞或者灭
+                    var is_up = $(this).hasClass("diggit");
+                    var _this= $(this).children("span");
+
+                    $.ajax({
+                        url: "/digg/",
+                        type: "post",
+                        data: {
+                            is_up: is_up,
+                            article_id: "{{ article_obj.pk }}",
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            console.log(typeof data);
+
+                            if(data.state){
+                                // 提交成功
+                               var val=_this.text();
+                               _this.text(parseInt(val)+1)
+                            }else{
+                                // 重复提交
+                                var val= data.handled?"您已经推荐过！" :"您已经反对过！";
+                                $("#digg_tips").html(val);
+
+                                /*
+                                if(data.handled){
+                                    $("#digg_tips").html("您已经推荐过！")
+                                }else{
+                                    $("#digg_tips").html("您已经反对过！")
+                                }*/
+
+                                setTimeout(function () {
+                                     $("#digg_tips").html("")
+                                },1000)
+
+
+
+                            }
+                        }
+                    })
+                }
+                else {
+                    location.href="/login/"
+                }
+            });
+
+            // 提交评论
+            var pid="";
+            $(".comment_btn").click(function () {
+
+                var content=$("#comment_content").val();
+                if(pid){
+                     var index=content.indexOf("\n");
+                     content=content.slice(index+1)
+                }
+
+                $.ajax({
+                        url: "/comment/",
+                        type: "post",
+                        data: {
+                            content:content,
+                            article_id: "{{ article_obj.pk }}",
+                            pid:pid,
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                        },
+                        success: function (data){
+                              console.log(data);
+                              var comment_time=data.timer;
+                              var comment_content=data.content;
+                              var comment_user=data.user;
+
+                              var $li=` <li class="list-group-item">
+                                       <div>
+                                           <span class="small">${comment_time}</span>&nbsp;&nbsp;
+                                           <a href="">${comment_user}</a>
+                                       </div>
+                                       <div>
+                                           <p>${comment_content}</p>
+                                       </div>
+                                    </li>`;
+
+                              $(".comment_list").append($li);
+
+
+
+
+
+
+
+                             // 清空
+                            $("#comment_content").val("")
+                        }
+                })
+
+            });
+
+
+            // 回复按钮事件
+            $(".reply_btn").click(function () {
+                  $("#comment_content").focus();
+                  var val="@"+$(this).attr("username")+"\n";
+                $("#comment_content").val(val);
+
+                pid=$(this).attr("comment_id");
+
+            })
+        </script>
+    </div>
+
+
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<div></div>
+
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>blog</title>
+
+     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="icon" href="/static/images/ico/tfff.ico">
+    <link rel="stylesheet" href="/static/css/article.css">
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+
+</head>
+<body>
+
+                <h1 align="center" style="color: #2aabd2">{{ user_blog.title }}</h1>
+                <h2  align="center" style="color: #1b6d85">{{ user_blog.site_name }}</h2>
+
+
+<div class="container">
+
+    <div class="row">
+            <div class="col-md-3">
+
+                {% for cate in cate_list %}
+                        {{ cate.title }}
+                {% endfor %}
+
+                    <div class="panel panel-danger">
+                      <div class="panel-heading">文章分类</div>
+                      <div class="panel-body">
+                        {% for cate, count in cate_list %}
+                                <p><a href="/{{ username }}/category/{{ cate }}">{{ cate.title }}({{ count }})</a></p>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+
+                     <div class="panel panel-success">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">标签分类</h3>
+                          </div>
+                          <div class="panel-body">
+
+                              {% for tag, count in tag_list %}
+                                    <p><a href="/{{ username }}/tag/{{ tag }}">{{ tag }}({{ count }})</a></p>
+                              {% endfor %}
+
+
+                          </div>
+                         </div>
+                
+                    <div class="panel panel-footer">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">日期归档</h3>
+                          </div>
+                          <div class="panel-body">
+                           
+                              {% for date in date_list %}
+                                    <p><a href="/{{ username }}/time/{{ date.0 }}">{{ date.0 }}({{ date.1 }})</a></p>
+                              {% endfor %}
+                              
+                              
+                          </div>
+                     </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+
+
+                {% for article in article_list %}
+                    <p>
+                        <a href="/{{ username }}/article/{{ article.pk }}">{{ article.title }}</a>
+                    </p>
+                    <p>
+                    {{ article.desc }}
+                    </p>
+                    <hr>
+                {% endfor %}
+
+            </div>
+
+            <div class="col-md-3">
+
+            </div>
+
+    </div>
+
+
+
+</div>
+
+
+
+</body>
+</html>

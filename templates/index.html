@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+        <title>博客网</title>
+
+
+
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="icon" href="/static/images/ico/tfff.ico">
+    <link rel="stylesheet" href="/static/css/article.css">
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+
+</head>
+<body>
+<div class="jumbotron">
+    <div class="container">
+        {% if request.user.username %}
+                <h1><a href="">{{ request.user.username }}</a></h1>
+            <p><span>上次登录</span>{{ request.user.last_login|date:'Y-m-d H:i:s' }}</p>
+            <p><a class="btn btn-primary btn-lg" href="{% url 'logout' %}" role="button">注销</a></p>
+          {% else %}
+                  <h1>搏客网</h1>
+             <p>只要你的速度够快，队友的问号就跟不上你</p>
+                     <p><a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">登录</a></p>
+        {% endif %}
+
+
+    </div>
+    </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3">
+           <div class="panel panel-danger">
+              <div class="panel-heading">随笔标签</div>
+              <div class="panel-body">
+                <p><a href="">随笔</a></p>
+              </div>
+            </div>
+
+            <div class="panel panel-success">
+              <div class="panel-heading">
+                <h3 class="panel-title">文章分类</h3>
+              </div>
+              <div class="panel-body">
+               <p><a href="">文章</a></p>
+              </div>
+             </div>
+
+            <div class="panel panel-footer">
+              <div class="panel-heading">
+                <h3 class="panel-title">日期归档</h3>
+              </div>
+              <div class="panel-body">
+               <p><a href="">日期</a></p>
+              </div>
+             </div>
+
+        </div>
+
+
+        <div class="col-md-9">
+
+            {% for article in article_list %}
+                <div class="panel panel-default">
+                      <div class="panel-body">
+                            <h4><a href="/{{ article.user.username }}/article/{{ article.pk }}" class="modal-body">{{ article.title }}</a></h4>
+                      </div>
+                      <div>
+                            <span class="media-left"><a href=""><img width="74" height="75" src="/static/images/fish.jpg" alt=""></a></span>
+                            <span class="media-right">{{ article.desc }}</span>
+                      </div>
+
+
+                      <div class="panel-footer">
+                          <span><a href="{% url 'blog' article.user.username %}">{{ article.user.username }}</a></span>&nbsp;&nbsp;
+                          发布于&nbsp;&nbsp;<font>{{ article.create_time|date:'Y-m-d H:i' }}</font><a href=""></a>
+                          <div class="pull-right">
+                              <span class="glyphicon glyphicon-heart-empty"></span><a href="{% url 'upload' %}">点赞({{ article.up_cout }})</a>
+                                <span class="glyphicon glyphicon-envelope"></span><a href="{% url 'comment' %}">评论({{ article.comment_count }})</a>
+                          </div>
+                      </div>
+                </div>
+            {% endfor %}
+
+
+
+
+        </div>
+
+
+
+
+    </div>
+
+</div>
+
+
+
+
+
+<div></div>
+
+
+</body>
+</html>

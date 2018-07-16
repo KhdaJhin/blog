@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+        <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+
+</head>
+<body>
+
+
+                <div class="container">
+
+
+        <div class="row" style="margin-top: 200px">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="login-paths">
+            <div class="path with-wikidot">
+                <form action="" role="form">
+                    {% csrf_token %}
+                    <div class="login-form form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-user"></i></span>
+                            <input class="text form-control input-lg" id="usn" type="text" placeholder="登录名">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-key"></i></span>
+                            <input class="text form-control input-lg" id="pwd" type="password" placeholder="password">
+                        </div>
+
+                    </div>
+
+                         <div class="login-form form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-user"></i></span>
+                            <input class="text form-control input-lg" id="tel" type="text" placeholder="电话号码">
+                        </div>
+                    </div>
+
+
+                         <div class="login-form form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-user"></i></span>
+                            <input class="text form-control input-lg" id="eml" type="email" placeholder="邮箱">
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="form-group">
+                        <div class="buttons">
+                            <a href="javascript:void (0);" type="submit" class="btn btn-primary btn-lg" id="regs"><i class="icon-signin"></i> 注册</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="buttons">
+                            <a type="submit" class="btn btn-primary btn-lg" href="{% url 'register' %}"><i class="icon-signin"></i> 检查是否可用</a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+</div>
+    </div>
+{#                <script src="/static/bootstrap/js/bootstrap.js"></script>#}
+                <script src="/static/js/jquery.js"></script>
+                <script>
+                    $('#regs').click(function () {
+                        let usn = $('#usn').val();
+                        let pwd = $('#pwd').val();
+                        let tel = $('#tel').val();
+                        let eml = $('#eml').val();
+                        let _this = $(this);
+                        $.ajax({
+                            url: {% url 'register' %},
+                            type: 'post',
+                            data: {
+                                usn: usn,
+                                pwd: pwd,
+                                tel: tel,
+                                eml: eml,
+                                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                            },
+                            success: function (data) {
+                                if(data.used){
+                                    alert('该用户名或手机号已被注册，请重新输入用户名！')
+                                }else {
+                                    alert("注册成功，正在为你跳转登录页面！");
+                                    location.href = '/login/'
+                                }
+                            }
+                        })
+                    })
+                </script>
+
+</body>
+</html>

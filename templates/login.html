@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Title</title>
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+
+
+</head>
+<body>
+
+<div class="container">
+
+
+        <div class="row" style="margin-top: 200px">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="login-paths">
+            <div class="path with-wikidot">
+                <form  action="" role="form">
+                    {% csrf_token %}
+                    <div class="login-form form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-user"></i></span>
+                            <input class="text form-control input-lg" id="usn" name="usn" type="text" placeholder="登录名">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-key"></i></span>
+                            <input class="text form-control input-lg" id="pwd" type="password" placeholder="password">
+                        </div>
+                        <span class="help-block">
+                            <a href="">忘记密码?</a>
+                        </span>
+                    </div>
+
+                    <div class="checkbox bind-to-ip">
+                        <label for="bind-to-ip">
+                            <input type="checkbox" name="" id="bind-to-ip">记住密码                       </label>
+                        <a href="#" class="security-explanation-link" data-toggle="popover" title="" data-container="body" data-content="<p>When you check this option, we remember you're IP address. This means that if you move your computer to another location, you will be asked to sign in again. It is also more secure and hacker-proof. </p><p> However, some firewalls make it look like you're always changing IP address, so if you use a computer that is behind a firewall, and you find yourself being mysteriously signed out, do not use this option.</p>" role="button" data-placement="auto" data-original-title="Security Explanation" data-trigger="hover">?</a>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="buttons">
+                            <a href="javascript:void (0);" id="dl" type="submit" class="btn btn-primary btn-lg"><i class="icon-signin"></i> 登录</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="buttons">
+                            <a type="submit" href="{% url 'register' %}" class="btn btn-primary btn-lg"><i class="icon-signin"></i> 注册</a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+</div>
+    </div>
+<script src="/static/js/jquery.js"></script>
+<script>
+    $('#dl').click(function () {
+        let usn = $('#usn').val();
+        let pwd = $('#pwd').val();
+        $.ajax({
+            url: {% url 'login' %},
+            type: 'post',
+            data: {
+                usn: usn,
+                pwd: pwd,
+                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+            },
+            success:function (data) {
+                if(data.clear){
+                    location.href = '/index/'
+                }else {
+                    alert(data.ha)
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

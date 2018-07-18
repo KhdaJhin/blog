@@ -27,6 +27,9 @@
                         </div>
                     </div>
 
+
+
+
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="icon-key"></i></span>
@@ -37,6 +40,25 @@
                         </span>
                     </div>
 
+
+
+                    <div class="login-form form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-user"></i></span>
+                            <input class="text form-control small input-lg" id="code" name="code" type="text" placeholder="验证码" />
+                            <img src="{% url 'code' %}" onclick="changeImg(this)" alt="验证码加载中" title="点击更换" />
+                        </div>
+                    </div>
+
+
+{#                    <div>#}
+{#                        <div >#}
+{#                            <input name="fuck" type="text" placeholder="验证码">#}
+{#                            <img src="{% url 'code' %}" onclick="changeImg(this)" alt="验证码加载中" title="点击更换">#}
+{#                        </div>#}
+{#                    </div>#}
+
+
                     <div class="checkbox bind-to-ip">
                         <label for="bind-to-ip">
                             <input type="checkbox" name="" id="bind-to-ip">记住密码                       </label>
@@ -46,6 +68,7 @@
                     <div class="form-group">
                         <div class="buttons">
                             <a href="javascript:void (0);" id="dl" type="submit" class="btn btn-primary btn-lg"><i class="icon-signin"></i> 登录</a>
+                            <span id="msg"></span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -67,22 +90,29 @@
     </div>
 <script src="/static/js/jquery.js"></script>
 <script>
+    function changeImg(tis){
+        tis.src = tis.src + '?'
+    }
+
+
     $('#dl').click(function () {
         let usn = $('#usn').val();
         let pwd = $('#pwd').val();
+        let code = $('#code').val();
         $.ajax({
             url: {% url 'login' %},
             type: 'post',
             data: {
                 usn: usn,
                 pwd: pwd,
+                code: code,
                 csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
             },
             success:function (data) {
                 if(data.clear){
                     location.href = '/index/'
                 }else {
-                    alert(data.ha)
+                    $('#msg').text(data.msg).css('color', 'red')
                 }
             }
         })

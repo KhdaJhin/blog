@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('index/', views.index, name='index'),
+    path('code/', views.code, name='code'),
     path('digg/', views.digg),
     path('comment/', views.comment, name='comment'),
     path('backend/', views.backend),

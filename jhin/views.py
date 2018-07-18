@@ -1,35 +1,19 @@
 from django.shortcuts import render, redirect, HttpResponse, reverse
+from django.db.models import F, Count
+from django.contrib import auth
+from jhin.models import UserInfo, ArticleUpDown, ArticleJTag, Tag, Category, Comment, Article
 from django.http import JsonResponse
 from myblog import settings
 import os
 from django.db import transaction
 import json
-
-# Create your views here.
-
-from django.db.models import F, Q, Count
-from django.contrib import auth
-from jhin.models import UserInfo, ArticleUpDown, ArticleJTag, Tag, Category, Comment, Article, Blog
+from utils.code import check_code
 
 
 def index(request):                   # 上次登录时间没做
     article_list = Article.objects.all()
 
     return render(request, 'index.html', locals())
-
-
-def login(request):
-    if request.method == 'POST':
-        usn = request.POST.get('usn')
-        pwd = request.POST.get('pwd')
-        user = auth.authenticate(username=usn, password=pwd)
-        dic = {'ha': '用户名或密码错误！'}
-        print(usn, pwd)
-        if user:
-            auth.login(request, user)
-            dic['clear'] = 1
-        return JsonResponse(dic)
-    return render(request, 'login.html')
 
 
 def article(request, username, article_id):
@@ -210,3 +194,28 @@ def register(request):
             return JsonResponse({"used": 0})
         return JsonResponse({"used": 1})
     return render(request, 'register.html')
+
+
+def code(request):
+    img, rand_coed = check_code()
+    request.session['rand_code'] = rand_coed
+    from io import BytesIO
+    stream = BytesIO()
+    img.save(stream, 'png')
+    return HttpResponse(stream.getvalue())
+
+
+def login(request):
+    if request.method == 'POST':
+        usn = request.POST.get('usn')
+        pwd = request.POST.get('pwd')
+        rcode = request.POST.get('code')
+        if rcode.upper() != request.session['rand_code'].upper():
+            return JsonResponse({'msg': '验证码错误'})
+        user = auth.authenticate(username=usn, password=pwd)
+        dic = {'msg': '用户名或密码错误！'}
+        if user:
+            auth.login(request, user)
+            dic['clear'] = 1
+        return JsonResponse(dic)
+    return render(request, 'login.html')
